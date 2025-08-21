@@ -7,10 +7,11 @@ if (session.getAttribute("user") == null) {
 
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" isELIgnored="false"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Manage Items - Pahana Edu</title>
+    <title>Bills - Pahana Edu</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -222,53 +223,40 @@ if (session.getAttribute("user") == null) {
     
     <div class="container">
         <div class="page-header">
-            <h1 class="page-title">Item Management</h1>
-             <a href="item?action=add" class="btn btn-primary">Add New Item</a>
+            <h1 class="page-title">Billing Management</h1>
+             <a href="bill?action=create" class="btn btn-primary">Create New Bill</a>
         </div>
         
         <div class="table-container">
             <c:choose>
-                <c:when test="${not empty items}">
+                <c:when test="${not empty bills}">
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Price (LKR)</th>
-                                <th>Stock</th>
-                                <th>Category</th>
-                                <th>Description</th>
+                                <th>Bill ID</th>
+                                <th>Customer</th>
+                                <th>Account #</th>
+                                <th>Bill Date</th>
+                                <th>Due Date</th>
+                                <th>Amount (LKR)</th>
+                                <th>Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <c:forEach var="item" items="${items}">
+                            <c:forEach var="bill" items="${bills}">
                                 <tr>
-                                    <td>${item.itemId}</td>
-                                    <td>${item.name}</td>
-                                    <td class="text-right">${item.price}</td>
+                                    <td>${bill.billId}</td>
+                                    <td>${bill.customer.name}</td>
+                                    <td>${bill.customer.accountNumber}</td>
+                                    <td><fmt:formatDate value="${bill.billDate}" pattern="yyyy-MM-dd" /></td>
+                                    <td><fmt:formatDate value="${bill.dueDate}" pattern="yyyy-MM-dd" /></td>
+                                    <td class="text-right">${bill.totalAmount}</td>
                                     <td>
-                                        <c:choose>
-                                            <c:when test="${item.stockQuantity <= 5}">
-                                                <span class="stock-low">${item.stockQuantity} (Low)</span>
-                                            </c:when>
-                                            <c:when test="${item.stockQuantity <= 15}">
-                                                <span class="stock-medium">${item.stockQuantity} (Medium)</span>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <span class="stock-high">${item.stockQuantity} (Good)</span>
-                                            </c:otherwise>
-                                        </c:choose>
+                                        <span class="status-badge status-${bill.status.toLowerCase()}">${bill.status}</span>
                                     </td>
-                                    <td>${item.category}</td>
-                                    <td>${item.description}</td>
                                     <td class="actions-cell">
-                                        <a href="item?action=edit&id=${item.itemId}" class="btn btn-warning btn-sm">Edit</a>
-                                        <a href="item?action=delete&id=${item.itemId}"
-                                           class="btn btn-danger btn-sm"
-                                           onclick="return confirm('Are you sure you want to delete this item?');">
-                                            Delete
-                                        </a>
+                                        <a href="bill?action=view&id=${bill.billId}" class="btn btn-info btn-sm">View</a>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -277,12 +265,16 @@ if (session.getAttribute("user") == null) {
                 </c:when>
                 <c:otherwise>
                     <div class="empty-state">
-                        <div style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.5;"><i class="fas fa-box-open"></i></div>
-                        <h3>No Items Found</h3>
-                        <p>Start by adding your first item to the inventory.</p>
+                        <div style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;"><i class="fas fa-file-invoice-dollar"></i></div>
+                        <h3>No Bills Found</h3>
+                        <p>Start by creating your first bill for a customer.</p>
                     </div>
                 </c:otherwise>
             </c:choose>
+        </div>
+        
+        <div class="text-center">
+          
         </div>
     </div>
 
